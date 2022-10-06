@@ -1,0 +1,7 @@
+---
+title: "Clean lexicon(s) needed for Project SEAN"
+author: "Fraukje Coopmans"
+date: "10/6/2022"
+output: html_document
+---
+
