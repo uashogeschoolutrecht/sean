@@ -8,11 +8,12 @@
 ########################################################################
 ### Sentiment analyse van opgeschoond bestand met opgeschooonde bestand 
 ########################################################################
-from other.get_files import loadTable
+from get_files import loadTable
 
 # geschoonde data inladen
 clean_data = loadTable()
 
+# kopie pakken voor analye zodat backup beschikbaar is
 df = clean_data.copy()
 
 # hulp objecten inladen
