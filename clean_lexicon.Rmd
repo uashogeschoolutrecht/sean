@@ -1,0 +1,44 @@
+---
+title: "Clean lexicon(s) needed for Project SEAN"
+author: "Fraukje Coopmans"
+date: "10/6/2022"
+output: html_document
+---
+
+## Summary
+
+# 1. Load R-libraries
+```{r}
+library(tidyverse)         #Needed for read_table function
+```
+
+# 2. Load lexicon file
+```{r}
+lexicon1 <- read_table(file = "~/researchdrive/M21033303_DenA (Projectfolder)/DA_Onderzoek/2022sean/lexicons/DuOMAn-subjectivitylexicon_1.0 [NL]/subj_assessments.txt",
+                       col_names = c('word', 'gender', 'an1', 'an2'), 
+                       col_types = c(col_character(), col_character(), col_character(), col_character()))
+```
+# 3. Split lexicon into positive and negative word lists
+```{r}
+# Extract all words with a positive and negative annotation, each into avector
+words_pos <- lexicon1[lexicon1$an1 == '+' | lexicon1$an1 == '++',1]
+words_neg <- lexicon1[lexicon1$an1 == '-' | lexicon1$an1 == '--',1]
+```
+
+# 4. Export word lists
+```{r}
+save(words_neg, 
+     words_pos,
+     file = "~/researchdrive/M21033303_DenA (Projectfolder)/DA_Onderzoek/2022sean/data_in/sean_lexicon_nl.RData"
+     )
+```
+
+
+
+
+
+
+
+
+
+
