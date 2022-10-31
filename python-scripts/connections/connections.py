@@ -1,3 +1,6 @@
+from grpc import server
+
+
 def connectDB(db): 
     
     '''This function is used to connect to the HU server. 
@@ -5,7 +8,7 @@ def connectDB(db):
 
     import pymssql 
     connect = pymssql.connect(
-        server='DBND25.medewerkers.ad.hvu.nl',
+        server=input('voeg de servernaam in!'),
         database=db)
 
     return connect
@@ -30,3 +33,4 @@ def sqlFileToString(sqlname):
     sql = re.sub('(\n|\r|\t)', ' ',sql)
 
     return sql
+
