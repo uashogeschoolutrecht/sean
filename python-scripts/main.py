@@ -8,7 +8,7 @@
 ########################################################################
 ### Sentiment analyse van opgeschoond bestand met opgeschooonde bestand 
 ########################################################################
-from get_files import loadTable
+from other.get_files import loadTable
 
 # geschoonde data inladen
 clean_data = loadTable()
