@@ -88,7 +88,7 @@ Bij de eerste versie van dit project hebben we gebruik gemaakt van twee verschil
 ---
 In de onderstaande figuur staan de resultaten van beide modellen. Er is een uitsplitsing gemaakt naar een aantal onderwerpen, daarbij is steeds naar de 15 meest voorkomende onderwerpen gekeken. Bij de analyse met het boolean model zijn alleen regulaten meegenomen met een betrouwbarheid van > 0.95.
 
-![image.png](/images/side-by-side.png)
+![image.png](/python-scripts/images/side-by-side.png)
 
 De resultaten laten zien dat gemiddeld genomen de e-mails overwegend negatief zijn, alleen de onderwerpen ***waarmerken documenten, formulieren, inschrijven en inhoudelijke vragen onderwijs*** laten een positief sentiment zien. 
 
