@@ -1,4 +1,4 @@
-def sentimetBoolean(t_df,accuracy):
+def sentimentBoolean(t_df,accuracy):
     '''NOTE TEKST TOEVOEGEN!!!!!!!!!!!!!!'''
     # voor meer info https://huggingface.co/DTAI-KULeuven/robbert-v2-dutch-sentiment?text=a.
     from transformers import RobertaTokenizer, RobertaForSequenceClassification
@@ -33,7 +33,7 @@ def sentimetBoolean(t_df,accuracy):
     return df
 
 
-def sentimetLikert(t_df):
+def sentimentLikert(t_df):
     '''NOTE TEKST TOEVOEGEN!!!!!!!!!!!!!!'''
     # voor meer info https://huggingface.co/DTAI-KULeuven/robbert-v2-dutch-sentiment?text=a.
     df = t_df.copy()
