@@ -1,12 +1,13 @@
 # SEAN
 
-- Author: Anne Leemans
+- Author: Anne Leemanss
 - Date: 27/10/2022
 - Hogeschool Utrecht
 
 
 ## Requirements
-- Chromdriver kan [hier](https://chromedriver.chromium.org/downloads) gedownload worden. Sla deze op in de hoofdmap van deze repo. 
+- Chromdriver kan [hier](https://chromedriver.chromium.org/downloads) gedownload worden. Sla deze op in de hoofdmap van deze repo. Of voeg deze toe aan te environmental variables.
+
 - Laatste ODBC driver kan [hier](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver16) gedownload worden.
 
 > **_LET OP!:_** check de versie van je chrome en zorg dat deze overeenkomt met de chrome driver
@@ -14,7 +15,6 @@
 ##  About
 
 Sean is een algoritme dat vrije tekst kan lezen en een classificatie kan toepassen op basis van het aanwezige sentiment. Het doel is een HU product te ontwikkelen (bijv. R package) dat vrij beschikbaar is ten behoeve van sentiment analyse, dit kan bijvoorbeeld via GitHub geborgd en beheerd worden. 
-
 
 Sean profileert zich als een D&A/DDHU off the shelve data science product. Insteek is algemeen model (algoritme) ontwikkelen, wat breed inzetbaar is (bijv. Topdesk meldingen, open vragen vragenlijsten, voeden van andere modellen). Pipeline met hoe het algoritme interacteert met HU DWH moet nog uitgedacht worden, wellicht een directe koppeling R <-> HU DWH. Of en hoe deze self-service ingezet zou kunnen worden moet nog uitgedacht worden. 
 
@@ -50,4 +50,5 @@ Toepassing op open vragenlijst vragen heeft mogelijk weinig draagvlake
 - [Dutch RoBERTa-based Language Model](https://arxiv.org/pdf/2001.06286.pdf)
 - [Bert](https://arxiv.org/pdf/1810.04805.pdf&usg=ALkJrhhzxlCL6yTht2BRmH9atgvKFxHsxQ)
 - [Training set](https://huggingface.co/DTAI-KULeuven/robbert-v2-dutch-sentiment?text=Ik+erken+dat+dit+een+boek+is%2C+daarmee+is+alles+gezegd.)
-- [Trianing script](https://github.com/benjaminvdb/DBRD)
+- [Training script](https://github.com/iPieter/RobBERT)
+- [Library scrpts](https://github.com/benjaminvdb/DBRD) 

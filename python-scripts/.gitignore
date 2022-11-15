@@ -1,0 +1,14 @@
+# Environments
+.venv
+
+#json files
+*.json
+
+# Cache
+__pycache__
+
+# csv
+*.csv
+
+# applications
+*.exe
