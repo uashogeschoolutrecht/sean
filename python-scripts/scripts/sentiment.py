@@ -1,4 +1,4 @@
-def sentimentBoolean(t_df,accuracy):
+def sentimentBoolean(t_df,accuracy, colname):
     '''NOTE TEKST TOEVOEGEN!!!!!!!!!!!!!!'''
     # voor meer info https://huggingface.co/DTAI-KULeuven/robbert-v2-dutch-sentiment?text=a.
     from transformers import RobertaTokenizer, RobertaForSequenceClassification
@@ -17,7 +17,7 @@ def sentimentBoolean(t_df,accuracy):
     df['score_onderwerp_{}'.format(n)] = 0
 
     # sentiment laden voor elke onderwerp kolom per rij (max length voor model is 512)
-    c = 'onderwerp_1'
+    c = colname
     for i in df.index:
         if len(df[c][i]) > 30 and len(df[c][i]) < 900:
             temp = classifier(df[c][i])
@@ -33,22 +33,33 @@ def sentimentBoolean(t_df,accuracy):
     return df
 
 
-def sentimentLikert(t_df):
-    '''NOTE TEKST TOEVOEGEN!!!!!!!!!!!!!!'''
-    # voor meer info https://huggingface.co/DTAI-KULeuven/robbert-v2-dutch-sentiment?text=a.
+def sentimentLikert(t_df, colname,scale=3):
+    '''This defenitions scores sentiment based on a likert scale. This is either on a 3 point or 
+    5 point scale (default is 3 point), for the 3 point scale a twitter based model is used:
+    https://huggingface.co/btjiong/robbert-twitter-sentiment?text=a. This model is spicificly 
+    trained for dutch text. 
+    The 5 point scale uses a model that is multilingual:
+    https://huggingface.co/DTAI-KULeuven/robbert-v2-dutch-sentiment?text=a.'''
     df = t_df.copy()
     from transformers import AutoTokenizer, AutoModelForSequenceClassification
     from scipy.special import softmax
 
-    model_name = 'nlptown/bert-base-multilingual-uncased-sentiment'
+    if scale == 3:
+        model_name = 'btjiong/robbert-twitter-sentiment'
+    else:
+        model_name = 'nlptown/bert-base-multilingual-uncased-sentiment'
+
     model = AutoModelForSequenceClassification.from_pretrained(model_name)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-    # labels instellen
-    labels = ['Very negative', 'Negative', 'Neutral', 'Positive', 'Very positive']
+    # set labels either 3 point or 5 points
+    if scale == 3:
+        labels = ['Negative', 'Neutral', 'Positive',]
+    else:
+        labels = ['Very negative', 'Negative', 'Neutral', 'Positive', 'Very positive']
 
     # definieer kolom naam
-    c = 'onderwerp_1'
+    c = colname
     
     # labels toevoegen als kolommen
     for l in labels:
