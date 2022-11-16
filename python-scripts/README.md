@@ -5,6 +5,8 @@
 - Hogeschool Utrecht
 
 
+- Rins Rutgers data science expert vragen om hulp
+
 ## Requirements
 - Chromdriver kan [hier](https://chromedriver.chromium.org/downloads) gedownload worden. Sla deze op in de hoofdmap van deze repo. Of voeg deze toe aan te environmental variables.
 
