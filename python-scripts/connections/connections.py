@@ -30,3 +30,22 @@ def sqlFileToString(sqlname):
     sql = re.sub('(\n|\r|\t)', ' ',sql)
 
     return sql
+
+def readfileRD(projectname, csvfile):
+    
+    '''This function takes as input a project folder name and csvfilename
+    from the SURF Research Drive to import a file. Note: file must be 
+    csv and be located in the [projectname]/data_in/ directory.'''
+
+    import os
+    from os import path
+    #check if file exists with csv extension in research drive of user
+    userRD = os.getlogin()
+    location = r'/home/{}/researchdrive/M21033303_DenA (Projectfolder)/DA_Onderzoek/{}/data_in/{}.csv'.format(userRD, projectname, csvfile)
+    path.exists(location)
+
+    import pandas as pd
+    #read in csvfile from location
+    df = pd.read_csv(location, nrows = 2, sep = ',')
+
+    return df
