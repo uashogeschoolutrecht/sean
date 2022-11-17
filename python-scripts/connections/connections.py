@@ -39,11 +39,15 @@ def readfileRD(projectname, csvfile):
 
     import os
     from os import path
+    import sys
     #check if file exists with csv extension in research drive of user
     userRD = os.getlogin()
     location = r'/home/{}/researchdrive/M21033303_DenA (Projectfolder)/DA_Onderzoek/{}/data_in/{}.csv'.format(userRD, projectname, csvfile)
-    path.exists(location)
-
+   
+    if not path.exists(location):
+        raise Exception("Csv file does not exist in the project directory data_in")
+        return
+    
     import pandas as pd
     #read in csvfile from location
     df = pd.read_csv(location, nrows = 2, sep = ',')
