@@ -22,7 +22,7 @@ def getDfFromDB(db,sql):
     return df
 
 # geschoonde data inladen
-def loadTable(colum):
+def loadTable(column):
 
     bev_df = getDfFromDB(db='TOPDESK_SAAS',sql='topdesk_sample')
 
@@ -30,16 +30,16 @@ def loadTable(colum):
     # file zonder id voor anayse 
     df = pd.DataFrame(bev_df[[
         'melding',
-        colum,
+        column,
         'ref_domein',
         'ref_specificatie'
         ]])
     
     # indien het gaat om een verzoek tel aantal email berichten aan de hand van de keren dat het woord onderwerp: voorkomt
-    if colum == 'verzoek':
-        df['onderwerp_count'] = df[colum].str.count(r'(Onderwerp:|Subject:)')
+    if column == 'verzoek':
+        df['onderwerp_count'] = df[column].str.count(r'(Onderwerp:|Subject:)')
     else:
-        df['onderwerp_count'] = df[colum].str.count(r'([0-9]{2}-[0-9]{2}-[0-9]{4}|[0-9]{2}-[A-z]{3}-[0-9]{4})')*2
+        df['onderwerp_count'] = df[column].str.count(r'([0-9]{2}-[0-9]{2}-[0-9]{4}|[0-9]{2}-[A-z]{3}-[0-9]{4})')*2
 
     # lengte van de spit
     split_len = max(df['onderwerp_count'])
@@ -50,28 +50,28 @@ def loadTable(colum):
         cols += ['onderwerp_{}'.format(i)]
     
     # onderwerp teksten als aparte kolommen toevoegen
-    if colum == 'verzoek':
+    if column == 'verzoek':
         cols = cols[:-1]
-        df[cols] = df[colum].str.split('Onderwerp:.*?\n', expand=True)
+        df[cols] = df[column].str.split('Onderwerp:.*?\n', expand=True)
         dropcols = ['onderwerp_count', 'onderwerp_0']
     else:
-        df[cols] = df[colum].str.split(r'([0-9]{2}-[0-9]{2}-[0-9]{4}.*?\n|[0-9]{2}-[A-z]{3}-[0-9]{4}.*?\n)', expand=True)
+        df[cols] = df[column].str.split(r'([0-9]{2}-[0-9]{2}-[0-9]{4}.*?\n|[0-9]{2}-[A-z]{3}-[0-9]{4}.*?\n)', expand=True)
         dropcols = ['onderwerp_count', 'onderwerp_0']
         for i in range(1,split_len+1,2):
             dropcols += ['onderwerp_{}'.format(i)]
 
     # eerste uitbreiding weggooien bevat alleen info van voor het woord onderwerp onderwerp count is ook niet meer nodig
-    df.drop(columns=dropcols, inplace=True)
+    df.drop(columnns=dropcols, inplace=True)
 
-    if colum == 'actie':
+    if column == 'actie':
         p = 2
         for i in range(1,int(split_len/2+1)):
-            df.rename(columns={'onderwerp_{}'.format(p):'onderwerp_{}'.format(i)},inplace=True)
+            df.rename(columnns={'onderwerp_{}'.format(p):'onderwerp_{}'.format(i)},inplace=True)
             p += 2
 
 
     # voor versie 0.1 van SEAN kijken we alleen naar het eerst onderwerp
-    df = df[df.columns.to_list()[:5]]
+    df = df[df.columnns.to_list()[:5]]
 
     # onderwerp 0 uit cols list halen !NOTE bij meer onderwerpen nr 2 aanpassen
     cols = cols[1:2]
