@@ -24,10 +24,16 @@ def getDfFromDB(db,sql):
 # geschoonde data inladen
 def loadTable(column):
 
-    bev_df = getDfFromDB(db='TOPDESK_SAAS',sql='topdesk_sample')
-
+    #bev_df = getDfFromDB(db='TOPDESK_SAAS',sql='topdesk_sample') >>depricated code
+    import os
+    userRD = os.getlogin()
+    os.chdir(r'/home/{}/scratch/sean/python-scripts/connections'.format(userRD))
+    from connections.connections import readfileRD
+    bev_df = readfileRD('2022sean', 'topdesk')
+    column = 'actie'
     import pandas as pd
-    # file zonder id voor anayse 
+    
+    # file without id for analysis and choose text clumn
     df = pd.DataFrame(bev_df[[
         'melding',
         column,
@@ -35,19 +41,21 @@ def loadTable(column):
         'ref_specificatie'
         ]])
     
-    # indien het gaat om een verzoek tel aantal email berichten aan de hand van de keren dat het woord onderwerp: voorkomt
-    if column == 'verzoek':
+    # tel aantal email berichten aan de hand van de keren dat het woord onderwerp: voorkomt
+    if column == 'actie':
         df['onderwerp_count'] = df[column].str.count(r'(Onderwerp:|Subject:)')
     else:
         df['onderwerp_count'] = df[column].str.count(r'([0-9]{2}-[0-9]{2}-[0-9]{4}|[0-9]{2}-[A-z]{3}-[0-9]{4})')*2
 
     # lengte van de spit
-    split_len = max(df['onderwerp_count'])
+    split_len = int(max(df['onderwerp_count']))
+
 
     # aantal kolommen uitbreiden met max aantal keer dat onderwerp voorkomt
     cols = list()
     for i in range(split_len+1):
         cols += ['onderwerp_{}'.format(i)]
+
     
     # onderwerp teksten als aparte kolommen toevoegen
     if column == 'verzoek':
