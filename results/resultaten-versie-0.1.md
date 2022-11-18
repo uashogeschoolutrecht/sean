@@ -74,12 +74,45 @@ Nu de mails geïdentificeerd en geschoond zijn kunnen we de sentiment analyse er
 ## Sentiment analyse
 Sentiment analyse scoort korte stukken tekst op basis van de woorden of combinatie van woorden. Doel is om te achterhalen of de tekst een positieve of negatieve connotatie heeft. Aan de hand van handmatig geclassificeerde stukken tekst kan een model ontwikkeld worden dat in staat is om deze scores toe te wijzen.
 <br></br>
-### Twee modellen
+### Drie modellen
 Bij de eerste versie van dit project hebben we gebruik gemaakt van twee verschillende modellen:
-1.  [Dutch RoBERTa-based Language Model](https://arxiv.org/pdf/2001.06286.pdf) dit model maakt gebruikt van een ***boolean*** methode waarbij stukken tekst enkel als ***positief*** of ***negatief*** geclassificeerd worden (dus geen neutraal optie). Ook wordt er een betrouwbaarheidsscore toegewezen die loopt van ***0,5*** tot ***1***. Het gebruikte model is getraind op basis van een review dataset DBRD. Dit is een dataset die bestaat uit 118.516 boek reviews die vervolgens door gebruikers gescoord zijn. Voor het trainen van RoBERTa zijn 22.252 van deze reviews gebruikt. Dit model hebben we vervolgens zelf getest door te kijken naar hotel reviews van een aantal hotels in Maastricht die we met een webscraper van [Tripadvisor.nl]('https://www.tripadvisor.nl/) gescraped hebben. Uit deze test bleek dat het model voor 90% betrouwbaar was. Hierbij moet wel opgemerkt worden dat het model getraind is op reviews (van boeken) en het is dus maar de vraag hoe goed dit op andere bronnen toepasbaar is. Het voordeel is wel dat dit model specifiek voor Nederlandstalige teksten is ontwikkeld. 
-2.  [Bert multilingual sentiment](https://arxiv.org/pdf/2007.13061.pdf) dit model maakt gebruik van een 5punts ***likert scale*** die loopt van heel negatief naar heel positief. Elk stuk tekst krijgt per punt op deze schaal een score tussen ***0.0*** en ***1.0***. Waarbij het totaal altijd 1 is, een stuk tekst kan bijv. 0,9 positief en 0,1 heel positief zijn. Deze data is getraind op Wikipedia-data dumps van 104 talen. Het model is niet getest op de review data van Tripadvisor. In een volgende versie is dit wel een gewenste toevoeging. 
+1.  [Dutch RoBERTa-based Language Model](https://arxiv.org/pdf/2001.06286.pdf) dit model maakt gebruikt van een ***boolean*** methode waarbij stukken tekst enkel als ***positief*** of ***negatief*** geclassificeerd worden (dus geen neutraal optie). Ook wordt er een betrouwbaarheidsscore toegewezen die loopt van ***0,5*** tot ***1***. Het gebruikte model is getraind op basis van een review dataset DBRD. Dit is een dataset die bestaat uit 118.516 boek reviews die vervolgens door gebruikers gescoord zijn. Voor het trainen van RoBERTa zijn 22.252 van deze reviews gebruikt. 
+2.  [Bert multilingual sentiment](https://arxiv.org/pdf/2007.13061.pdf) dit model maakt gebruik van een 5punts ***likert scale*** die loopt van heel negatief naar heel positief. Elk stuk tekst krijgt per punt op deze schaal een score tussen ***0.0*** en ***1.0***. Waarbij het totaal altijd 1 is, een stuk tekst kan bijv. 0,9 positief en 0,1 heel positief zijn. Deze data is getraind op Wikipedia-data dumps van 104 talen. 
+3.  [Robbert twitter sentiment](https://huggingface.co/btjiong/robbert-twitter-sentiment?text=a) Dit model is een afgeleide van het Roberta-based model. Daarbij is dat model als uitgangspunt genomen en vervolgens getraind op twitter data. Hier wordt gebruik gemaakt van een drie puntschaal netagtief, neutraal, positief.
+
    
->   Beide modellen kunnen [hier](https://huggingface.co/models?language=nl&sort=downloads&search=sentiment) gevonden worden.
+>   Alle modellen kunnen [hier](https://huggingface.co/models?language=nl&sort=downloads&search=sentiment) gevonden worden.
+
+## Betrouwbaarheidstests
+Alle modellen hebben we zelf getest door te kijken naar hotel reviews van een aantal hotels in Maastricht die we met een webscraper van [Tripadvisor.nl]('https://www.tripadvisor.nl/) gescraped hebben. We hebben in totaal naar 2.296 reviews van twee hotels gekeken. Deze reviews bevatten een korte review tekst en een review score van 1 tot 5. 
+We hebben vervolgens de review teksten door de drie verschillende modellen gehaald, daarnaast hebben we het 2e model (multilingual) omgezet naar een drie puntsschaal. Daarbij hebben we de steeds uiterste 2 waardes samen gevoegd (zeer positief wordt positief en idem voor negatief). Tot slot hebben we dit omgezette model samengoegd met het derde model (gemiddelde scores van de beide modellen samengevoegd). Hier kwamen de volgende resultaten uit voort
+```ruby
+Accuracy test for sentiment analysis models on Tripadvisor data (n=2296) 
+Accuracy for DTAI-KULeuven/robbert-v2-dutch-sentiment: 
+-------------------------------------------------------------------------------
+Accuracy of model on cleaned data: 96 %
+-------------------------------------------------------------------------------
+
+Accuracy for bert-base-multilingual-uncased-sentiment:
+-------------------------------------------------------------------------------
+Accuracy of model on cleaned data: 57 %
+Accuracy of model for extremes (Very positive/negative): 62 %
+Accuracy of model for recoded values to 3 pointscale: 84 %
+-------------------------------------------------------------------------------
+
+Accuracy for btjiong/robbert-twitter-sentiment: 
+-------------------------------------------------------------------------------
+Accuracy of model on cleaned data: 85 %
+-------------------------------------------------------------------------------
+
+Accuracy for robbert-twitter & bert-multilingual combined: 
+-------------------------------------------------------------------------------
+Accuracy for model on cleaned data: 86 %
+-------------------------------------------------------------------------------
+```
+
+Het eerst model lijkt het veruit het beste te doen met een betrouwbaarheid van 96%. Deze resultaten zijn echter wel vertekenend, het model is namelijk getrained op review data. Het is dan ook niet verwonderlijk dat de score zo hoog uitvalt als er op vergelijkbare data getest wordt. Interssanten is om te kijken naar het tweede model. Dit model is namelijk getraind op verschillende data bronnen en zou dus in theorie breder toepasbaar moeten zijn. De betrouwbaarheid van 57% is echter wel heel erg laag. Er treed een lichte verbetering (62%) op als er alleen naar de extreme waardes wordt gekeken. Het beste resultaat wordt echter als de 5 puntsschaal omgezet wordt naar een 3 puntschaal. Met 84% is betrouwbaarheid welliswaar lagen dan het eerste model, echter gezien de multi inzetbaarheid misschien wel bruikbaarder. Het derde model toont een vergelijkbare score aan en lijkt ook goed inzetbaar te zijn. Tot slot lijkt de combinatie van de twee modellen het best resultaat te geven. 
+
 
 ## Resultaten 
 In de onderstaande figuur staan de resultaten van beide modellen. Er is een uitsplitsing gemaakt naar een aantal onderwerpen, daarbij is steeds naar de 15 meest voorkomende onderwerpen gekeken. Bij de analyse met het boolean model zijn alleen resulaten meegenomen met een betrouwbaarheid van > 0.95.
