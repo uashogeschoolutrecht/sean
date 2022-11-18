@@ -1,5 +1,5 @@
 class sentAnalysisApp:
-    '''NOTE ADD CLASS INGO'''
+    '''NOTE ADD CLASS INFO'''
     def __init__(self,dtframe,colname):
         self.dtaframe = dtframe
         self.colname = colname
@@ -10,6 +10,13 @@ class sentAnalysisApp:
         transforms all text to lower case and removes redundant and trailing 
         spaces.
         '''
+        import pandas as pd
+        pd.options.mode.chained_assignment = None  # default='warn'
+
+        # supress future warnings
+        import warnings
+        warnings.simplefilter(action='ignore', category=FutureWarning)
+
 
         # set values to srting
         df = dtframe.copy()
@@ -43,19 +50,16 @@ class sentAnalysisApp:
         # set model
         model = AutoModelForSequenceClassification.from_pretrained(model_name)
         tokenizer = AutoTokenizer.from_pretrained(model_name)
-        
-        # definieer kolom naam
-        c = colname
-
+  
         # labels toevoegen als kolommen
         for l in self.labels:
             df[l] = 0.00
 
         for i in df.index:
             # skip all text that have less then 30 or more than 900 characters
-            if len(df[c][i]) > 30 and len(df[c][i]) < 900:
+            if len(df[colname][i]) > 30 and len(df[colname][i]) < 900:
                 
-                sent_text = df[c][i]
+                sent_text = df[colname][i]
 
                 # tokinize
                 encoded_text = tokenizer(sent_text , return_tensors='pt')
@@ -82,8 +86,8 @@ class sentAnalysisApp:
 
         return df
 
-    def combineModels(self):         
-        # clean data
+    def runModel(self): 
+            # clean data
         df = self.cleanData(self.dtaframe,self.colname)
 
         # set models
@@ -105,11 +109,11 @@ class sentAnalysisApp:
         for l in self.labels:
             df_a.rename(columns={l:'{}_a'.format(l)}, inplace=True)
             df_b.rename(columns={l:'{}_b'.format(l)}, inplace=True)
-
-        # drop review and rating column
-        df_b.drop(columns=['rating','review'], inplace=True)
-
+        
+        # drop keep only the scores 
+        df_b = df_b.iloc[:,-3:]
         # join dataframes
+        import pandas as pd
         df_combined =  pd.concat([df_a, df_b], axis=1)
 
         # combine columns to one
@@ -129,103 +133,4 @@ class sentAnalysisApp:
         return df_combined
 
 
-    def sentimentVisDfLikert(self, df,subject):
-        '''Deze defenitie prepareert data van een sentiment analyse voor visualisatie
-        NOTE! deze functie kan alleen gebruikt worden voor sentiment die gebruik maakt 
-        van een likert scale weergeeft'''
-
-        temp_df = df.copy()
-
-        # grouperen naar gekozen onderwerp
-        temp_df = temp_df[[subject]+self.labels].groupby(subject).mean()
-        temp_df.reset_index(inplace=True)
-        
-        # aantallen telleven voor sortering
-        aantal = df.copy()
-        aantal = aantal.groupby([subject]).size()
-
-        # series to dataframe
-        temp_df = temp_df.merge(aantal.reset_index(), 'left')
-
-        # sort naar aantal
-        temp_df.sort_values(0, ascending=False, inplace=True)
-
-        # omzetten naar dataframe
-        import pandas as pd
-        temp_df.reset_index(inplace=True, drop=True)
-        temp_df.rename(columns={subject: 'thema', 0: 'aantal'},inplace=True)
-
-        # Cul waardes maken    
-        for i in range(1,len(self.labels)+1):
-            temp_df['{}_cul'.format(self.labels[i-1])] = temp_df.loc[:,self.labels[0:i]].sum(axis=1)
-
-
-        return temp_df
-
-    def plotResults(self):
-
-        #NOTE WORK IN PROGRESS!!
-        # sentiment = sentAnalysisApp(df_rev,'review')
-
-        # results = sentiment.combineModels()
-        # results.to_csv('tripadivsordata_metscore.csv',sep=';',encoding='UTF-8-sig',index=False)
-
-
-        # hotels = ['Linden Hotel', 'Super strip', 'Fietshotel', 'Grand hall', 'Hotel off lights', 'City hotel', 'In de zon']
-
-        # df_h = pd.DataFrame({'hotelname':hotels})
-
-        # for i in range (327):
-        #     df_h = df_h.append(pd.DataFrame({'hotelname':hotels}))
-
-        # df_h.reset_index(drop=True,inplace=True)
-
-
-        # results =  pd.concat([df_h, df], axis=1)
-        # results = results[['hotelname','sentiment']]
-        # neg = results[results['sentiment']<0]
-        # pos = results[results['sentiment']>0]
-
-        # neg = neg.groupby('hotelname').mean()
-        # pos = pos.groupby('hotelname').mean()
-        # neg.reset_index(inplace=True)
-        # pos.reset_index(inplace=True)
-
-        # ### VIS
-        # import matplotlib.pyplot as plt
-        # import seaborn as sns
-
-        # # Change default style
-        # sns.set_style('white')
-        # # Change default context
-        # sns.set_context('notebook') 
-
-        # sentiment_hue = results.eval("sentiment / rating").rename("sentiment")
-        # f, ax = plt.subplots(figsize=(6.5, 6.5))
-        # ax.grid(False)
-        # ax.set(
-        #     xlabel='tripadvisore rating',    
-        #     ylabel='sentiment score from combined models')
-            
-        # sns.despine(f, left=True, bottom=True)
-
-        # # titel toevoegen
-        # scat = sns.scatterplot(    
-        #     data=results, 
-        #     y="sentiment", 
-        #     x= 'rating', 
-        #     hue=sentiment_hue, 
-        #     palette= sns.color_palette("Spectral", as_cmap=True), 
-        #     legend=False,
-        #     linewidth=0, 
-        #     ax=ax
-        #     )
-
-
-        # from scipy.stats import pearsonr
-        # import numpy as np
-        # corr, _ = pearsonr(np.array(results['sentiment']), np.array(results['rating']))
-
-        # scat.axes.set_title(
-        #     label=' Tripadvisor test:\n Reviewscore naar sentiment score (n=2296)\n{}\n'.format('Pearsons correlation: %.3f' % corr),fontsize=13)
-        print('results')
+    
