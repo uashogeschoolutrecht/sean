@@ -50,6 +50,6 @@ def readfileRD(projectname, csvfile):
     
     import pandas as pd
     #read in csvfile from location
-    df = pd.read_csv(location, nrows = 2, sep = ',')
+    df = pd.read_csv(location, sep = ';')
 
     return df
