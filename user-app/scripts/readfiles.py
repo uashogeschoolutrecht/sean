@@ -1,9 +1,9 @@
-def readCsv(csvfile,sep=';',nrows=None):
+def readCsv(csvfile, project, sep=';',nrows=None):
     import os
     from os import path
     #check if file exists with csv extension in research drive of user
     userRD = os.getlogin()
-    location = r'G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\user-app\input\{}.csv'.format(csvfile)
+    location = r'/home/{}/researchdrive/M21033303_DenA (Projectfolder)/DA_Onderzoek/{}/data_in/{}.csv'.format(userRD, project, csvfile)
     path.exists(location)
 
     if not path.exists(location):
