@@ -10,7 +10,7 @@ if __name__ == "__main__":
     from scripts.getdata import loadTable
 
     # data inladen 
-    clean_data = loadTable(colum='verzoek')
+    clean_data = loadTable(column='actie')
     df = clean_data.copy()
 
     # Boolean model halen
