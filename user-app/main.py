@@ -1,25 +1,16 @@
 if __name__ == "__main__":
-    # load data from csv
-    from scripts.readfiles import readCsv
-    df = readCsv('tripadivsordata')
 
-    # run sentiment analysis 
+    # DEFINE COLNAME 
+    df = '''YOUR FILE PATH'''
+    colname = '''DEFINE YOUR COLNAME '''
+
     from scripts.sentiment import sentAnalysisApp
-    sent_app = sentAnalysisApp(df,'review')
+    sent_app = sentAnalysisApp(df,colname)
+    df_t = sent_app.runModel()
 
-    # choose the model tipe?
-    results_likert = sent_app.runModel()
-    results_bool = sent_app.sentAnalysisReviews()
-    
-    results_likert.to_csv(
-        r'G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\user-app\input\sentimentresults.csv',
-        sep=';',
-        encoding='UTF-8-sig',
-        index=False
-        )
-
-    results_bool.to_csv(
-        r'G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\user-app\input\sentimentresults_roberta.csv',
+    # SAVE TO LOCATION
+    df_t.to_csv(
+        '''ENTER YOUR FILE OUTPUT LOCATION AND FILNAME''',
         sep=';',
         encoding='UTF-8-sig',
         index=False

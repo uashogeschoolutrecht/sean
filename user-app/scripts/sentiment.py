@@ -8,6 +8,7 @@ class sentAnalysisApp:
         self.labels = ['Negative', 'Neutral', 'Positive']
         self.modeltype = model_type
 
+
     def cleanData(self,dtframe,colname):
         '''Some genereal data preperation, remove all symbols and numbers.
         transforms all text to lower case and removes redundant and trailing 
@@ -39,6 +40,8 @@ class sentAnalysisApp:
 
         return df
 
+     
+     
     def sentAnalysis(self,dt_f,model_name,likert): 
         '''This defenitions scores sentiment based on a likert scale. This is either on a 3 point or 
         5 point scale (default is 3 point), for the 3 point scale a twitter based model is used:
