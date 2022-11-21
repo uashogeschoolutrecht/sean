@@ -10,7 +10,7 @@ if __name__ == "__main__":
     from scripts.getdata import loadTable
 
     # data inladen 
-    clean_data = loadTable(colum='verzoek')
+    clean_data = loadTable(colum='actie')
     df = clean_data.copy()
 
     # Boolean model halen
@@ -30,3 +30,6 @@ if __name__ == "__main__":
     from scripts.visualize import sentimentBarPlotBool,sentimentBarPlotLikert
     sentimentBarPlotBool(df_sent_bool_vis.head(15),'Sentiment van eerste vraag uit verzoek emails naar referentie Boolean   \n')
     sentimentBarPlotLikert(df_sent_likert_vis.head(15),'Sentiment van eerste vraag uit verzoek emails naar referentie Likert   \n')
+
+
+
