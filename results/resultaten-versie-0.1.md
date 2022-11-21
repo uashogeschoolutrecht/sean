@@ -85,47 +85,39 @@ Bij de eerste versie van dit project hebben we gebruik gemaakt van twee verschil
 
 ## Betrouwbaarheidstests
 Alle modellen hebben we zelf getest door te kijken naar hotel reviews van een aantal hotels in Maastricht die we met een webscraper van [Tripadvisor.nl]('https://www.tripadvisor.nl/) gescraped hebben. We hebben in totaal naar 2.296 reviews van twee hotels gekeken. Deze reviews bevatten een korte review tekst en een review score van 1 tot 5. 
-We hebben vervolgens de review teksten door de drie verschillende modellen gehaald, daarnaast hebben we het 2e model (multilingual) omgezet naar een drie puntsschaal. Daarbij hebben we de steeds uiterste 2 waardes samen gevoegd (zeer positief wordt positief en idem voor negatief). Tot slot hebben we dit omgezette model samengoegd met het derde model (gemiddelde scores van de beide modellen samengevoegd). Hier kwamen de volgende resultaten uit voort
+We hebben vervolgens de review teksten door de drie verschillende modellen gehaald, daarnaast hebben we het 2e model (multilingual) omgezet naar een drie puntsschaal. Daarbij hebben we de steeds uiterste 2 waardes samen gevoegd (zeer positief wordt positief en idem voor negatief). Tot slot hebben we dit omgezette model samengoegd met het derde model (gemiddelde scores van de beide modellen samengevoegd). Hier kwamen de volgende resultaten uit voort:
 ```ruby
 Accuracy test for sentiment analysis models on Tripadvisor data (n=2296) 
-Accuracy for DTAI-KULeuven/robbert-v2-dutch-sentiment: 
+Accuracy for 'DTAI-KULeuven/robbert-v2-dutch-sentiment': 
 -------------------------------------------------------------------------------
 Accuracy of model on cleaned data: 96 %
 -------------------------------------------------------------------------------
 
-Accuracy for bert-base-multilingual-uncased-sentiment:
+Accuracy for 'bert-base-multilingual-uncased-sentiment':
 -------------------------------------------------------------------------------
 Accuracy of model on cleaned data: 57 %
 Accuracy of model for extremes (Very positive/negative): 62 %
 Accuracy of model for recoded values to 3 pointscale: 84 %
 -------------------------------------------------------------------------------
 
-Accuracy for btjiong/robbert-twitter-sentiment: 
+Accuracy for 'btjiong/robbert-twitter-sentiment': 
 -------------------------------------------------------------------------------
 Accuracy of model on cleaned data: 85 %
 -------------------------------------------------------------------------------
 
-Accuracy for robbert-twitter & bert-multilingual combined: 
+Accuracy for 'robbert-twitter & bert-multilingual' combined: 
 -------------------------------------------------------------------------------
-Accuracy for model on cleaned data: 86 %
+Accuracy of model on cleaned data: 86 %
 -------------------------------------------------------------------------------
 ```
 
-Het eerst model lijkt het veruit het beste te doen met een betrouwbaarheid van 96%. Deze resultaten zijn echter wel vertekenend, het model is namelijk getrained op review data. Het is dan ook niet verwonderlijk dat de score zo hoog uitvalt als er op vergelijkbare data getest wordt. Interssanten is om te kijken naar het tweede model. Dit model is namelijk getraind op verschillende data bronnen en zou dus in theorie breder toepasbaar moeten zijn. De betrouwbaarheid van 57% is echter wel heel erg laag. Er treed een lichte verbetering (62%) op als er alleen naar de extreme waardes wordt gekeken. Het beste resultaat wordt echter als de 5 puntsschaal omgezet wordt naar een 3 puntschaal. Met 84% is betrouwbaarheid welliswaar lagen dan het eerste model, echter gezien de multi inzetbaarheid misschien wel bruikbaarder. Het derde model toont een vergelijkbare score aan en lijkt ook goed inzetbaar te zijn. Tot slot lijkt de combinatie van de twee modellen het best resultaat te geven. 
+Het eerst model lijkt het veruit het beste te doen met een betrouwbaarheid van 96%. Deze resultaten zijn echter wel vertekenend, het model is namelijk getrained op review data. Het is dan ook niet verwonderlijk dat de score zo hoog uitvalt als er op vergelijkbare data getest wordt. Interssanter is om te kijken naar het tweede model. Dit model is namelijk getraind op verschillende data bronnen en zou dus in theorie breder toepasbaar moeten zijn. De betrouwbaarheid van 57% is echter wel heel erg laag. Er treed een lichte verbetering (62%) op als er alleen naar de extreme waardes wordt gekeken. Het beste resultaat wordt echter als de 5 puntsschaal omgezet wordt naar een 3 puntschaal. Met 84% is betrouwbaarheid welliswaar lagen dan het eerste model, echter gezien de multi inzetbaarheid misschien wel bruikbaarder. Het derde model toont een vergelijkbare score aan en lijkt ook goed inzetbaar te zijn. 
 
+Het model dat het meest potentie biedt voor gebruik is de combinatie van model 2 en 3. Hierbij is model twee gehercodeerd naar een driepuntsschaal, gecombineerd met de het derde model en vervolgens is daar de gemiddelde score van genomen. Tot slot is de score gehercodeerd naar een schaal van -1 t/m 1, waarbij 1 heel positief en -1 heel negatief is. Verdere test van dit gecombineerde model op de Tripadivsor data laten het volgende resultaat zien:
+
+![](/python-scripts/images/correlation-combined-model.png)
+ Bovenstaande grafiek toont een positieve correlataie tussen sentiment score van het gecombineerde model en de user ratings. De pearson's r van 0.712 is aan de lage kant desalnietemin lijken de resultaten niet volledig op toeval gebasseerd te zijn. Op basis van de bovenstaande bevindingen is er voor gekozen om bij het doen van sentiment analyse gebruik te maken van het gecombineerde model. Er kan voor gekozen worden om afhankelijk van de input data gebruik te maken van het eerste model. 
 
 ## Resultaten 
-In de onderstaande figuur staan de resultaten van beide modellen. Er is een uitsplitsing gemaakt naar een aantal onderwerpen, daarbij is steeds naar de 15 meest voorkomende onderwerpen gekeken. Bij de analyse met het boolean model zijn alleen resulaten meegenomen met een betrouwbaarheid van > 0.95.
 
-![image.png](/python-scripts/images/side-by-side.png)
-
-De resultaten laten zien dat gemiddeld genomen de e-mails overwegend negatief zijn, alleen de onderwerpen ***waarmerken documenten, formulieren, inschrijven en inhoudelijke vragen onderwijs*** laten een positief sentiment zien. 
-
-Als we kijken naar de verschillen tussen de twee modellen lijken die vergelijkbaar te zijn. 
-
-De getoonde resultaten zeggen echter niks over de betrouwbaarheid van de analyse. Een korte scan op de teksten laat zien dat een handmatige classificatie de e-mails eerder in een neutrale categorie vallen en niet direct positief of negatief zijn. 
-<br></br>
-### Stappen ter verbetering sentiment
-Op basis van de huidige analyse is moeilijk in te schatten of de sentiment analyse betrouwbare resultaten oplevert. Een eerste stap om dit te verbeteren zou zijn om een sample van de e-mails handmatig te scoren en deze resultaten vervolgens naast de resultaten van het algoritme leggen. 
-Om vervolgens de betrouwbaarheid nog verder te vergoten kan in eerste instantie nog meer winst gehaald worden in het beter schonen van de analyse teksten (e-mails). Het beste resultaat wordt echter gehaald door zeer grote sample handmatig classificeren en die als trainingset gebruiken om zelf een model te maken. Dit is vermoedelijk te tijdsintensief, een andere oplossing kan zijn om andere (betere) voorgetrainde modellen te gebruiken. 
 

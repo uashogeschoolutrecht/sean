@@ -1,9 +1,12 @@
+
+
 class sentAnalysisApp:
-    '''NOTE ADD CLASS INFO'''
-    def __init__(self,dtframe,colname):
+    '''NOTE ADD CLASS INFO --> NAME CHANGES PLUS MORE INFO FOR EACH INDIVIDUAL DEFINITION'''
+    def __init__(self,dtframe,colname,model_type='combined'):
         self.dtaframe = dtframe
         self.colname = colname
-        self.labels = ['Negative', 'Neutral', 'Positive',]
+        self.labels = ['Negative', 'Neutral', 'Positive']
+        self.modeltype = model_type
 
     def cleanData(self,dtframe,colname):
         '''Some genereal data preperation, remove all symbols and numbers.
@@ -36,13 +39,14 @@ class sentAnalysisApp:
 
         return df
 
-    def sentAnalysis(self,dt_f,colname,model_name,likert): 
+    def sentAnalysis(self,dt_f,model_name,likert): 
         '''This defenitions scores sentiment based on a likert scale. This is either on a 3 point or 
         5 point scale (default is 3 point), for the 3 point scale a twitter based model is used:
         https://huggingface.co/btjiong/robbert-twitter-sentiment?text=a. This model is spicificly 
         trained for dutch text. 
         The 5 point scale uses a model that is multilingual:
-        https://huggingface.co/nlptown/bert-base-multilingual-uncased-sentiment?text=a.'''   
+        https://huggingface.co/nlptown/bert-base-multilingual-uncased-sentiment?text=a.
+        '''   
         from transformers import AutoTokenizer, AutoModelForSequenceClassification
         from scipy.special import softmax
         df = dt_f.copy()
@@ -57,9 +61,9 @@ class sentAnalysisApp:
 
         for i in df.index:
             # skip all text that have less then 30 or more than 900 characters
-            if len(df[colname][i]) > 30 and len(df[colname][i]) < 900:
+            if len(df[self.colname][i]) > 30 and len(df[self.colname][i]) < 900:
                 
-                sent_text = df[colname][i]
+                sent_text = df[self.colname][i]
 
                 # tokinize
                 encoded_text = tokenizer(sent_text , return_tensors='pt')
@@ -86,51 +90,89 @@ class sentAnalysisApp:
 
         return df
 
+    def sentAnalysisReviews(self,df_t):
+        '''This model is sepcifically trained on Duthc user reviews and can there for 
+        be used on similair data. The model can be found here:
+        https://huggingface.co/DTAI-KULeuven/robbert-v2-dutch-sentiment?text=a.
+        '''
+        # set model
+        from transformers import RobertaTokenizer, RobertaForSequenceClassification
+        from transformers import pipeline
+        model_name = 'DTAI-KULeuven/robbert-v2-dutch-sentiment' 
+        model = RobertaForSequenceClassification.from_pretrained(model_name)
+        tokenizer = RobertaTokenizer.from_pretrained(model_name)
+
+        # classifier instellen
+        classifier = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
+
+        df = df_t
+        colname = self.colname
+        df['sentiment'] = 9999
+
+        # sentiment laden voor elke onderwerp kolom per rij (max length voor model is 512)
+        for i in df.index:
+            if len(df[colname][i]) > 30 and len(df[colname][i]) < 900:
+                temp = classifier(df[colname][i])
+                if temp[0]['label'] == 'Negative':
+                    df['sentiment'][i] = temp[0]['score']*-1
+                else:
+                    df['sentiment'][i] = temp[0]['score']
+
+
+        # Lege waardes verwijderen 
+        df = df[df['sentiment'] != 9999]
+
+        return df
+
     def runModel(self): 
-            # clean data
-        df = self.cleanData(self.dtaframe,self.colname)
+        # clean data
+        df = self.cleanData(self.dtaframe)
 
-        # set models
-        models = [
-            'btjiong/robbert-twitter-sentiment',
-            'nlptown/bert-base-multilingual-uncased-sentiment'
-        ]
+        # chcek model type
+        if self.modeltype == 'combined':
 
-        # sentiment op model a
-        df_a = self.sentAnalysis(
-            dt_f=df,colname=self.colname,model_name=models[0],likert=3)
-        
-        # sentiment op model b
-        df_b = self.sentAnalysis(
-            dt_f=df,colname=self.colname,model_name=models[1],likert=5)
+            # set models
+            models = [
+                'btjiong/robbert-twitter-sentiment',
+                'nlptown/bert-base-multilingual-uncased-sentiment'
+            ]
 
-
-        # combine models for an average score
-        for l in self.labels:
-            df_a.rename(columns={l:'{}_a'.format(l)}, inplace=True)
-            df_b.rename(columns={l:'{}_b'.format(l)}, inplace=True)
-        
-        # drop keep only the scores 
-        df_b = df_b.iloc[:,-3:]
-        # join dataframes
-        import pandas as pd
-        df_combined =  pd.concat([df_a, df_b], axis=1)
-
-        # combine columns to one
-        for l in self.labels:
-            df_combined[l] = (df_combined['{}_a'.format(l)] + df_combined['{}_b'.format(l)])/2
-
-        # drop old colums
-        for l in self.labels:
-            df_combined.drop(columns=['{}_a'.format(l),'{}_b'.format(l)],inplace=True)
-
-        # set sentiment score
-        df_combined['sentiment'] = round(df_combined['Positive'] - df_combined['Negative'],2)
-
-        # drop seperate columns 
-        df_combined.drop(columns=self.labels,inplace=True)
-
-        return df_combined
+            # sentiment op model a
+            df_a = self.sentAnalysis(
+                dt_f=df,model_name=models[0],likert=3)
+            
+            # sentiment op model b
+            df_b = self.sentAnalysis(
+                dt_f=df,model_name=models[1],likert=5)
 
 
-    
+            # combine models for an average score
+            for l in self.labels:
+                df_a.rename(columns={l:'{}_a'.format(l)}, inplace=True)
+                df_b.rename(columns={l:'{}_b'.format(l)}, inplace=True)
+            
+            # drop keep only the scores 
+            df_b = df_b.iloc[:,-3:]
+            # join dataframes
+            import pandas as pd
+            df_combined =  pd.concat([df_a, df_b], axis=1)
+
+            # combine columns to one
+            for l in self.labels:
+                df_combined[l] = (df_combined['{}_a'.format(l)] + df_combined['{}_b'.format(l)])/2
+
+            # drop old colums
+            for l in self.labels:
+                df_combined.drop(columns=['{}_a'.format(l),'{}_b'.format(l)],inplace=True)
+
+            # set sentiment score
+            df_combined['sentiment'] = round(df_combined['Positive'] - df_combined['Negative'],2)
+
+            # drop seperate columns 
+            df_combined.drop(columns=self.labels,inplace=True)
+
+            return df_combined
+
+        else:
+            df_r = self.sentAnalysisReviews(df_t=df)
+            return df_r

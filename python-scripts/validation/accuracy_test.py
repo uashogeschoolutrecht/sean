@@ -159,3 +159,28 @@ print('Accuracy for robbert-twitter & bert-multilingual combined: ')
 print('-------------------------------------------------------------------------------')
 print('Accuracy for model on cleaned data:',round(sum(df_2models_sc['accuracy'])/len(df_2models_sc)*100),'%')
 print('-------------------------------------------------------------------------------')
+
+
+
+
+### STATISTICAL ANALYSIS
+
+results_bool = pd.read_csv('G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\user-app\input\sentimentresults_roberta.csv')
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+r = stats.pearsonr(results_bool['rating'], results_bool['sentiment'])
+
+
+# draw regplot
+sns.regplot(x = 'rating',
+            y = 'sentiment', 
+            data = results_bool)
+  
+# show the plot
+plt.xlabel('Sentiment score')
+plt.ylabel('User ratings')
+plt.title('Sentiment score naar user review Tripadivsor data (n=2296)\nPearsons R: {}'.format(round(r.statistic,2)))
+plt.show()
+
