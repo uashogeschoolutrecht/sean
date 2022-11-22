@@ -94,6 +94,9 @@ class sentAnalysisApp:
         df = df[df['total']>0]
         df.drop(columns='total', inplace=True)
 
+        # reset index
+        df.reset_index(drop=True, inplace=True)
+
         return df
 
     def sentAnalysisReviews(self):
@@ -130,6 +133,9 @@ class sentAnalysisApp:
 
         # round score
         df['sentiment'] =  round(df['sentiment'],4)
+
+        # reset index
+        df.reset_index(drop=True, inplace=True)
 
         return df
 
@@ -180,11 +186,17 @@ class sentAnalysisApp:
             # drop seperate columns 
             df_combined.drop(columns=self.labels,inplace=True)
 
+            # reset index
+            df_combined.reset_index(drop=True, inplace=True)
+
             return df_combined
 
         else:
             df_r = self.sentAnalysisReviews()
 
+            # reset index
+            df_r.reset_index(drop=True, inplace=True)
+            
             return df_r
 
 ########### EXAMPLE OF HOW THE CLASS WORKS !!! ###########
@@ -221,5 +233,4 @@ single_df = sent_app.runModel(model_type='single')
 
 # Return results combined model
 combined_df = sent_app.runModel()
-
 
