@@ -184,7 +184,7 @@ def scatterRegplot(df, title):
     # plot line
     p.map(
         func=sns.regplot, 
-        data=results_bool,
+        data=df,
         x='rating', 
         y='sentiment',  
         scatter = False, 
@@ -200,8 +200,30 @@ def scatterRegplot(df, title):
     plt.show()
 
 
-import pandas as pd
-results_bool = pd.read_csv(r'G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\user-app\output\tripadivsordata_metscore.csv',sep=';',encoding='UTF-8-sig')
+def divergentBarPlot(df):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import matplotlib as mpl
+    import seaborn as sns
 
-title = 'Sentiment score naar user review Tripadivsor data '
-scatterRegplot(results_bool,title)
+
+    p = sns.FacetGrid(
+        data=df,
+        height=4.5, 
+        aspect=2.5)
+
+    sns.set_style("dark")
+    ax = sns.barplot(x=df['sentiment'], y=df['ref_domein'])
+
+    widths = np.array([bar.get_width() for bar in ax.containers[0]])
+    divnorm = mpl.colors.TwoSlopeNorm(vmin=widths.min(), vcenter=0, vmax=widths.max())
+    div_colors = plt.cm.RdYlGn(divnorm(widths))
+    for bar, color in zip(ax.containers[0], div_colors):
+        bar.set_facecolor(color)
+
+    plt.xlabel('')
+    plt.ylabel('')
+    plt.title('\nGemiddelde sentiment score op topdeskmeldingen uitgeslpitst naar domein (n=334)\n')
+
+    plt.tight_layout()
+    plt.show()
