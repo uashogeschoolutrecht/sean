@@ -164,23 +164,42 @@ print('-------------------------------------------------------------------------
 
 
 ### STATISTICAL ANALYSIS
-
-results_bool = pd.read_csv('G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\user-app\input\sentimentresults_roberta.csv')
+import pandas as pd
+results_bool = pd.read_csv(r'G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\user-app\output\tripadivsordata_metscore.csv',sep=';',encoding='UTF-8-sig')
 
 import seaborn as sns
 import matplotlib.pyplot as plt
 import scipy.stats as stats
 r = stats.pearsonr(results_bool['rating'], results_bool['sentiment'])
+sns.set_style("dark")
 
+p = sns.FacetGrid(
+    data=results_bool) 
+
+# set scatter with color hue
+p.map(
+    func=sns.scatterplot,
+    data=results_bool,
+    x='rating', 
+    y='sentiment', 
+    hue='sentiment',
+    palette='Blues')
+
+p.map(sns.regplot, 'rating', 'sentiment', scatter = False, ci = 95, 
+    fit_reg = True, color = 'blue') 
+p.map(sns.regplot, 'rating', 'sentiment', scatter = False, ci = 0, 
+    fit_reg = True, color = 'darkgreen')
 
 # draw regplot
-sns.regplot(x = 'rating',
-            y = 'sentiment', 
-            data = results_bool)
+# p = sns.regplot(x = 'rating',
+#             y = 'sentiment', 
+#             data = results_bool,
+#             scatter_kws={"color": "black"}, 
+#             line_kws={"color": "red"})
   
 # show the plot
-plt.xlabel('Sentiment score')
-plt.ylabel('User ratings')
-plt.title('Sentiment score naar user review Tripadivsor data (n=2296)\nPearsons R: {}'.format(round(r.statistic,2)))
+plt.xlabel('User ratings')
+plt.ylabel('Sentiment score')
+plt.title('\nSentiment score naar user review Tripadivsor data (n=2296)\nPearsons R: {}'.format(round(r.statistic,2)))
 plt.show()
 
