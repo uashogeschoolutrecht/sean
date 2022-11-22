@@ -221,3 +221,26 @@ single_df = sent_app.runModel(model_type='single')
 
 # Return results combined model
 combined_df = sent_app.runModel()
+
+
+########### SOFT MAX ###########
+
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from scipy.special import softmax
+model_name='btjiong/robbert-twitter-sentiment'
+
+# set model
+model = AutoModelForSequenceClassification.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+sent_text = 'Wat ben jij een vervelende man' 
+
+# tokinize
+encoded_text = tokenizer(sent_text , return_tensors='pt')
+
+# sentiment analysis
+output = model(**encoded_text)
+
+# get scores from sentiment
+scores = output[0][0].detach().numpy()
+scores = softmax(scores)
