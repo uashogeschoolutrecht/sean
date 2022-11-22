@@ -12,7 +12,7 @@ if __name__ == "__main__":
     # data inladen 
     clean_data = loadTable(colum='actie')
     df = clean_data.copy()
-
+    
     # Boolean model halen
     from scripts.sentiment import sentimetBoolean
     df_sent_bool = sentimetBoolean(df,0.95, 'onderwerp_1')

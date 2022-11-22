@@ -147,3 +147,61 @@ def sentimentBarPlotLikert(df, title):
 
     # titel toevoegen
     t.axes.set_title(label=title,fontsize=13)
+
+def scatterRegplot(df, title):
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    import scipy.stats as stats
+    r = stats.pearsonr(df['rating'], df['sentiment'])
+    sns.set_style("dark")
+    pallette = sns.color_palette("ch:s=-.2,r=.6", as_cmap=True)
+
+    p = sns.FacetGrid(
+        data=df,
+        height=3.5, 
+        aspect=2)
+
+    # set scatter with color hue
+    p.map(
+        func=sns.scatterplot,
+        data=df,
+        x='rating', 
+        y='sentiment', 
+        hue='sentiment',
+        palette=pallette)
+
+    # plot line range
+    p.map(
+        func=sns.regplot, 
+        data=df,
+        x='rating', 
+        y='sentiment', 
+        scatter = False, 
+        ci = 95, 
+        fit_reg = True, 
+        color = '#ADADAD') 
+
+    # plot line
+    p.map(
+        func=sns.regplot, 
+        data=results_bool,
+        x='rating', 
+        y='sentiment',  
+        scatter = False, 
+        ci = 0, 
+        fit_reg = True, 
+        color = '#5B5B5B')
+
+
+    # set labels and titles
+    plt.xlabel('User ratings')
+    plt.ylabel('Sentiment score')
+    plt.title('\n{} (n={})\nPearsons R: {}'.format(title,len(df), round(r.statistic,2)))
+    plt.show()
+
+
+import pandas as pd
+results_bool = pd.read_csv(r'G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\user-app\output\tripadivsordata_metscore.csv',sep=';',encoding='UTF-8-sig')
+
+title = 'Sentiment score naar user review Tripadivsor data '
+scatterRegplot(results_bool,title)
