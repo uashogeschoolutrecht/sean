@@ -39,7 +39,7 @@ def sentimentLikert(t_df, colname,scale=3):
     https://huggingface.co/btjiong/robbert-twitter-sentiment?text=a. This model is spicificly 
     trained for dutch text. 
     The 5 point scale uses a model that is multilingual:
-    https://huggingface.co/DTAI-KULeuven/robbert-v2-dutch-sentiment?text=a.'''
+    https://huggingface.co/nlptown/bert-base-multilingual-uncased-sentiment?text=a.'''
     df = t_df.copy()
     from transformers import AutoTokenizer, AutoModelForSequenceClassification
     from scipy.special import softmax
