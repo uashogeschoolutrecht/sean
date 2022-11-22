@@ -2,18 +2,20 @@
 
 class sentAnalysisApp:
     '''NOTE ADD CLASS INFO --> NAME CHANGES PLUS MORE INFO FOR EACH INDIVIDUAL DEFINITION'''
-    def __init__(self,dtframe,colname,model_type='combined'):
+    def __init__(self,dtframe,colname):
         self.dtaframe = dtframe
         self.colname = colname
         self.labels = ['Negative', 'Neutral', 'Positive']
-        self.modeltype = model_type
 
 
-    def cleanData(self,dtframe,colname):
+    def cleanData(self):
         '''Some genereal data preperation, remove all symbols and numbers.
         transforms all text to lower case and removes redundant and trailing 
         spaces.
         '''
+        df = self.dtaframe.copy()
+        colname = self.colname
+
         import pandas as pd
         pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -23,7 +25,6 @@ class sentAnalysisApp:
 
 
         # set values to srting
-        df = dtframe.copy()
         df[colname] = df[colname].astype(str)
 
         # remove all line breaks
@@ -42,7 +43,7 @@ class sentAnalysisApp:
 
      
      
-    def sentAnalysis(self,dt_f,model_name,likert): 
+    def sentAnalysis(self,model_name,likert): 
         '''This defenitions scores sentiment based on a likert scale. This is either on a 3 point or 
         5 point scale (default is 3 point), for the 3 point scale a twitter based model is used:
         https://huggingface.co/btjiong/robbert-twitter-sentiment?text=a. This model is spicificly 
@@ -52,21 +53,23 @@ class sentAnalysisApp:
         '''   
         from transformers import AutoTokenizer, AutoModelForSequenceClassification
         from scipy.special import softmax
-        df = dt_f.copy()
+        df = self.dtaframe.copy()
+        colname = self.colname
+        labels = self.labels
 
         # set model
         model = AutoModelForSequenceClassification.from_pretrained(model_name)
         tokenizer = AutoTokenizer.from_pretrained(model_name)
   
         # labels toevoegen als kolommen
-        for l in self.labels:
+        for l in labels:
             df[l] = 0.00
 
         for i in df.index:
             # skip all text that have less then 30 or more than 900 characters
-            if len(df[self.colname][i]) > 30 and len(df[self.colname][i]) < 900:
+            if len(df[colname][i]) > 15 and len(df[colname][i]) < 900:
                 
-                sent_text = df[self.colname][i]
+                sent_text = df[colname][i]
 
                 # tokinize
                 encoded_text = tokenizer(sent_text , return_tensors='pt')
@@ -83,17 +86,17 @@ class sentAnalysisApp:
                     import numpy as np
                     scores = np.array([scores[0:2].sum()]+[scores[2]]+[scores[3:5].sum()])
 
-                for l,s in zip(self.labels,scores):
+                for l,s in zip(labels,scores):
                     df[l][i] = s
 
         # drop empty values
-        df.loc[:,'total'] = df[self.labels].sum(numeric_only=True, axis=1)    
+        df.loc[:,'total'] = df[labels].sum(numeric_only=True, axis=1)    
         df = df[df['total']>0]
         df.drop(columns='total', inplace=True)
 
         return df
 
-    def sentAnalysisReviews(self,df_t):
+    def sentAnalysisReviews(self):
         '''This model is sepcifically trained on Duthc user reviews and can there for 
         be used on similair data. The model can be found here:
         https://huggingface.co/DTAI-KULeuven/robbert-v2-dutch-sentiment?text=a.
@@ -108,13 +111,13 @@ class sentAnalysisApp:
         # classifier instellen
         classifier = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
 
-        df = df_t
+        df = self.dtaframe.copy()
         colname = self.colname
         df['sentiment'] = 9999
 
         # sentiment laden voor elke onderwerp kolom per rij (max length voor model is 512)
         for i in df.index:
-            if len(df[colname][i]) > 30 and len(df[colname][i]) < 900:
+            if len(df[colname][i]) > 15 and len(df[colname][i]) < 900:
                 temp = classifier(df[colname][i])
                 if temp[0]['label'] == 'Negative':
                     df['sentiment'][i] = temp[0]['score']*-1
@@ -125,14 +128,17 @@ class sentAnalysisApp:
         # Lege waardes verwijderen 
         df = df[df['sentiment'] != 9999]
 
+        # round score
+        df['sentiment'] =  round(df['sentiment'],4)
+
         return df
 
-    def runModel(self): 
+    def runModel(self,model_type='combined'): 
         # clean data
-        df = self.cleanData(self.dtaframe)
+        df = self.cleanData()
 
         # chcek model type
-        if self.modeltype == 'combined':
+        if model_type == 'combined':
 
             # set models
             models = [
@@ -142,11 +148,11 @@ class sentAnalysisApp:
 
             # sentiment op model a
             df_a = self.sentAnalysis(
-                dt_f=df,model_name=models[0],likert=3)
+                model_name=models[0],likert=3)
             
             # sentiment op model b
             df_b = self.sentAnalysis(
-                dt_f=df,model_name=models[1],likert=5)
+                model_name=models[1],likert=5)
 
 
             # combine models for an average score
@@ -169,7 +175,7 @@ class sentAnalysisApp:
                 df_combined.drop(columns=['{}_a'.format(l),'{}_b'.format(l)],inplace=True)
 
             # set sentiment score
-            df_combined['sentiment'] = round(df_combined['Positive'] - df_combined['Negative'],2)
+            df_combined['sentiment'] = round(df_combined['Positive'] - df_combined['Negative'],4)
 
             # drop seperate columns 
             df_combined.drop(columns=self.labels,inplace=True)
@@ -177,5 +183,41 @@ class sentAnalysisApp:
             return df_combined
 
         else:
-            df_r = self.sentAnalysisReviews(df_t=df)
+            df_r = self.sentAnalysisReviews()
+
             return df_r
+
+########### EXAMPLE OF HOW THE CLASS WORKS !!! ###########
+
+import pandas as pd
+input_df = pd.DataFrame(
+    {'test':[
+        'Ik ben wel heel erg blij', 
+        'ik ben super boos op jou', 
+        'Wat ben jij een vervelende man', 
+        'Waarom ben je niet liever voor me'
+        ]})
+
+# Run class wiht dataframe and columnname
+sent_app = sentAnalysisApp(input_df,'test')
+
+# return cleandata results from defenition CleanData
+clean_df = sent_app.cleanData()
+
+# Return results model a
+model_a = sent_app.sentAnalysis(
+                model_name='btjiong/robbert-twitter-sentiment',
+                likert=3
+                )
+
+# Return results model b
+model_b = sent_app.sentAnalysis(
+        model_name='nlptown/bert-base-multilingual-uncased-sentiment',
+        likert=5
+        )   
+
+# Return results single model
+single_df = sent_app.runModel(model_type='single')
+
+# Return results combined model
+combined_df = sent_app.runModel()
