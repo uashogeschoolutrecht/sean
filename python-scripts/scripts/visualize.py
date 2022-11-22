@@ -158,8 +158,8 @@ def scatterRegplot(df, title):
 
     p = sns.FacetGrid(
         data=df,
-        height=3.5, 
-        aspect=2)
+        height=4.5, 
+        aspect=2.5)
 
     # set scatter with color hue
     p.map(
