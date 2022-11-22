@@ -2,8 +2,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from time import sleep
 
-url = 'https://www.tripadvisor.nl/Hotel_Review-g188575-d230890-Reviews-Amrath_Grand_Hotel_de_l_Empereur-Maastricht_Limburg_Province.html#REVIEWS'
-
 def hotelScraper(url):
     # opties instellen voor driver 
     options = webdriver.ChromeOptions()
@@ -81,3 +79,37 @@ def hotelScraper(url):
 
     return df
 
+urls = [
+    'https://www.tripadvisor.nl/Hotel_Review-g188575-d230890-Reviews-Amrath_Grand_Hotel_de_l_Empereur-Maastricht_Limburg_Province.html#REVIEWS',
+    'https://www.tripadvisor.nl/Hotel_Review-g188575-d206845-Reviews-Designhotel_Maastricht-Maastricht_Limburg_Province.html#REVIEWS'
+] 
+
+import pandas as pd
+df_rev = pd.DataFrame()
+
+for u in urls:
+    df = hotelScraper(urls[1])
+    df_rev = df_rev.append(df)
+
+# zoveel mogelijk troep weggooien voor elke kolom
+import os
+os.chdir(r'G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\python-scripts\scripts')
+from cleaning import schoonmaken
+from cleaning import multiToSingleSpace
+
+# cijfer en andere tekens verwijderen
+df_rev = schoonmaken(df_rev,'review')
+df_rev = multiToSingleSpace(df_rev,'review')
+
+# alle lege reviews weglaten
+df_rev = df_rev[df_rev['review']!='nan']
+
+# reset index
+df_rev.reset_index(drop=True, inplace=True)
+
+# safe as csv for testing
+df_rev.to_csv('tripadivsordata.csv', index=False, sep=';', encoding='UTF-8-sig')
+
+import pandas as pd
+
+df = pd.DataFrame({'a':[1,2,3]})

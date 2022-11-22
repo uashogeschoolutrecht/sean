@@ -147,3 +147,83 @@ def sentimentBarPlotLikert(df, title):
 
     # titel toevoegen
     t.axes.set_title(label=title,fontsize=13)
+
+def scatterRegplot(df, title):
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    import scipy.stats as stats
+    r = stats.pearsonr(df['rating'], df['sentiment'])
+    sns.set_style("dark")
+    pallette = sns.color_palette("ch:s=-.2,r=.6", as_cmap=True)
+
+    p = sns.FacetGrid(
+        data=df,
+        height=4.5, 
+        aspect=2.5)
+
+    # set scatter with color hue
+    p.map(
+        func=sns.scatterplot,
+        data=df,
+        x='rating', 
+        y='sentiment', 
+        hue='sentiment',
+        palette=pallette)
+
+    # plot line range
+    p.map(
+        func=sns.regplot, 
+        data=df,
+        x='rating', 
+        y='sentiment', 
+        scatter = False, 
+        ci = 95, 
+        fit_reg = True, 
+        color = '#ADADAD') 
+
+    # plot line
+    p.map(
+        func=sns.regplot, 
+        data=df,
+        x='rating', 
+        y='sentiment',  
+        scatter = False, 
+        ci = 0, 
+        fit_reg = True, 
+        color = '#5B5B5B')
+
+
+    # set labels and titles
+    plt.xlabel('User ratings')
+    plt.ylabel('Sentiment score')
+    plt.title('\n{} (n={})\nPearsons R: {}'.format(title,len(df), round(r.statistic,2)))
+    plt.show()
+
+
+def divergentBarPlot(df):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import matplotlib as mpl
+    import seaborn as sns
+
+
+    p = sns.FacetGrid(
+        data=df,
+        height=4.5, 
+        aspect=2.5)
+
+    sns.set_style("dark")
+    ax = sns.barplot(x=df['sentiment'], y=df['ref_domein'])
+
+    widths = np.array([bar.get_width() for bar in ax.containers[0]])
+    divnorm = mpl.colors.TwoSlopeNorm(vmin=widths.min(), vcenter=0, vmax=widths.max())
+    div_colors = plt.cm.RdYlGn(divnorm(widths))
+    for bar, color in zip(ax.containers[0], div_colors):
+        bar.set_facecolor(color)
+
+    plt.xlabel('')
+    plt.ylabel('')
+    plt.title('\nGemiddelde sentiment score op topdeskmeldingen uitgeslpitst naar domein (n=334)\n')
+
+    plt.tight_layout()
+    plt.show()
