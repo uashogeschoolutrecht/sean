@@ -115,14 +115,14 @@ Het eerst model lijkt het veruit het beste te doen met een betrouwbaarheid van 9
 
 Het model dat het meest potentie biedt voor gebruik is de combinatie van model 2 en 3. Hierbij is model twee gehercodeerd naar een driepuntsschaal, gecombineerd met de het derde model en vervolgens is daar de gemiddelde score van genomen. Tot slot is de score gehercodeerd naar een schaal van -1 t/m 1, waarbij 1 heel positief en -1 heel negatief is. Verdere test van dit gecombineerde model op de Tripadivsor data laten het volgende resultaat zien:
 
-![](/python-scripts/images/correlation-combined-model.png)
+![](/images/correlation-combined-model.png)
 
 Bovenstaande grafiek toont een positieve correlataie tussen sentiment score van het gecombineerde model en de user ratings. De pearson's r van 0.712 is aan de lage kant desalnietemin lijken de resultaten niet volledig op toeval gebasseerd te zijn. Op basis van de bovenstaande bevindingen is er voor gekozen om bij het doen van sentiment analyse gebruik te maken van het gecombineerde model. Er kan echter ook voor gekozen worden om afhankelijk van de input data gebruik te maken van het eerste model. 
 
 ## Resultaten 
 Onderstaande figuur geven de resultaten voor de actie kolom uit de topdesk data. Er wordt steeds de gemiddelde sentiment score naar domein getoont. 
 
-![](/python-scripts/images/topdeskresultaten.png)
+![](/images/topdeskresultaten.png)
 
 De resultaten laten zien dat gemiddeld genomen de e-mails overwegend positief zijn, alleen de onderwerpen Finance en IM&ICT Werkplek laten een negatief sentiment zien.
 
