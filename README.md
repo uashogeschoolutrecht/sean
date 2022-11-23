@@ -1,5 +1,4 @@
 # SEAN
->*Development team: Anne Leemans (lead) & Fraukje Coopmans*
 
 
 
@@ -25,16 +24,20 @@ The schema in the overview bullet shows a view greyed out applications. The proj
 ![](images/flask-logo.png)
 
 - Develop flask app (or maybe Django?)
-- First locally hosted for testing 
-
+  - Flask is a web framework written in python. 
+- Local hosted
+  - In phase B the framework is developed and tested locally. 
+  
 
 ## Phase C
 ![](images/sean-branding.png)
--   This is the first time we see the user 
 -   Create UI 
+    -   Connect to Flask app
 -   Where do we host 
--   How does it interact with app
--   Azure function App with HTTP Trigger? More info [here](https://learn.microsoft.com/en-us/samples/azure-samples/flask-app-on-azure-functions/azure-functions-python-create-flask-app/)
-
+    -   Azure function App with HTTP Trigger? More info [here](https://learn.microsoft.com/en-us/samples/azure-samples/flask-app-on-azure-functions/azure-functions-python-create-flask-app/)
 
 ## Feedback loop
+The goal of the project is that there will be a continues feedback loop between the user and developers. This can be to either enhance existing apps or make recommendations for new features. 
+
+> 
+    Development team: Anne Leemans (lead) & Fraukje Coopmans
