@@ -24,17 +24,17 @@ The schema in the overview bullet shows a view greyed out applications. The proj
 ## Phase B
 ![](images/flask-logo.png)
 
-Develop flask app (or maybe Django?)
-First locally hosted for testing 
+- Develop flask app (or maybe Django?)
+- First locally hosted for testing 
 
 
 ## Phase C
 ![](images/sean-branding.png)
-This is the first time we see the user 
-Create UI 
-Where do we host 
-How does it interact with app
-Azure function App with HTTP Trigger? More info [here](https://learn.microsoft.com/en-us/samples/azure-samples/flask-app-on-azure-functions/azure-functions-python-create-flask-app/)
+-   This is the first time we see the user 
+-   Create UI 
+-   Where do we host 
+-   How does it interact with app
+-   Azure function App with HTTP Trigger? More info [here](https://learn.microsoft.com/en-us/samples/azure-samples/flask-app-on-azure-functions/azure-functions-python-create-flask-app/)
 
 
 ## Feedback loop
