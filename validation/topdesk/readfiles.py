@@ -54,7 +54,7 @@ def cleanEmails(dtframe, colname):
 
     return df
 
-def emailThreadToEmail(dtframe,colname,seperator=r'Onderwerp:.*?\n'):
+def emailThreadToEmails(dtframe,seperator=r'Onderwerp:.*?\n'):
     '''This defenition transforms emai thread to seperate email mesagges en removes al 
     redundant text. The use can define a seperater depending on the type of thread. 
     Regex is accepted. 
@@ -65,7 +65,10 @@ def emailThreadToEmail(dtframe,colname,seperator=r'Onderwerp:.*?\n'):
         raise Exception('data frame has to many columns, make sure you use format: ["id","email"]')
     
     df = dtframe.copy()
-
+    
+    # always take second column name for input
+    colname = list(df)[1]
+    
     # count emails in thread
     df['email_count'] = df[colname].str.count(seperator)
     df['len'] = df[colname].str.len()
@@ -94,34 +97,4 @@ def emailThreadToEmail(dtframe,colname,seperator=r'Onderwerp:.*?\n'):
     df = df[[df.columns[0]]+ cols[1:]]
 
     return df
-
-# read topdesk data from database
-topdesk_df = getDfFromDB(
-    db='TOPDESK_SAAS',
-    sql='''SELECT TOP (500) CONVERT(VARCHAR(256), inc.unid) AS id
-            ,srt.naam AS melding
-            ,actie
-            ,verzoek 
-            ,ref_domein
-            ,ref_specificatie
-        FROM [dbo].[incident] AS inc
-        LEFT JOIN soortbinnenkomst AS srt ON srt.unid = inc.soortbinnenkomstid
-        LEFT JOIN actiedoor ad ON ad.unid = inc.operatorgroupid
-        WHERE datumaangemeld >= '2021-01-01'
-            AND ad.naam = 'OL-STIP'
-            AND srt.naam = 'E-Mail';'''
-)
-
-# clean emails
-emails_df = emailThreadToEmail(topdesk_df[['id','verzoek']],'verzoek')
-
-# merge back together
-topdesk_df = topdesk_df.merge(emails_df,'left')
-
-emails_df.to_csv(r'G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\user-app\input\topdeskemails.csv', sep=';',encoding='utf-8-sig')
-
-
-
-
-
 
