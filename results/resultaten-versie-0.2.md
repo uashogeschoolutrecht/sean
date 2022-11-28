@@ -1,6 +1,6 @@
-# Sean the HU sentimenent analysis algorithm 
+# Sean: the HU sentimenent analysis algorithm 
 > 
-    Versie        : sean 0.01
+    Versie        : sentiment analysis 0.2
     Auteurs       : Anne Leemans/Fraukje Coopmans
     Start datum   : 27/10/2022
 
