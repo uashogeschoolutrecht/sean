@@ -1,6 +1,6 @@
 ########################## LOAD TEST DATA FROM TRIPADIVSOR #########################
 import pandas as pd 
-df_rev = pd.read_csv('tripadivsordata.csv', sep=';')
+df_rev = pd.read_csv(r'G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\user-app\input\tripadivsordata.csv', sep=';',nrows=10)
 
 def numberToValue(input_df,choices):
     '''Changes rating numbers to values for comparing'''
@@ -21,12 +21,10 @@ def numberToValue(input_df,choices):
 ########################## RUN MODELS ON REVIEWS #########################
 ############## boolean  model
 import os
-os.chdir(r'G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\python-scripts\scripts')
-from sentiment import sentimentBoolean
-df_sent_bool = sentimentBoolean(
-    t_df=df_rev,
-    accuracy=0.95,
-    colname='review')
+os.chdir(r'G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\user-app\scripts')
+from sentiment import sentAnalysisApp
+sent_app = sentAnalysisApp(df_rev,'review')
+df_sent_bool = sent_app.sentAnalysisReviews()
 
 choices = ['Negative', 'Negative', 'Neutral', 'Positive', 'Positive']
 
@@ -161,45 +159,4 @@ print('Accuracy for model on cleaned data:',round(sum(df_2models_sc['accuracy'])
 print('-------------------------------------------------------------------------------')
 
 
-
-
-### STATISTICAL ANALYSIS
-import pandas as pd
-results_bool = pd.read_csv(r'G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\user-app\output\tripadivsordata_metscore.csv',sep=';',encoding='UTF-8-sig')
-
-import seaborn as sns
-import matplotlib.pyplot as plt
-import scipy.stats as stats
-r = stats.pearsonr(results_bool['rating'], results_bool['sentiment'])
-sns.set_style("dark")
-
-p = sns.FacetGrid(
-    data=results_bool) 
-
-# set scatter with color hue
-p.map(
-    func=sns.scatterplot,
-    data=results_bool,
-    x='rating', 
-    y='sentiment', 
-    hue='sentiment',
-    palette='Blues')
-
-p.map(sns.regplot, 'rating', 'sentiment', scatter = False, ci = 95, 
-    fit_reg = True, color = 'blue') 
-p.map(sns.regplot, 'rating', 'sentiment', scatter = False, ci = 0, 
-    fit_reg = True, color = 'darkgreen')
-
-# draw regplot
-# p = sns.regplot(x = 'rating',
-#             y = 'sentiment', 
-#             data = results_bool,
-#             scatter_kws={"color": "black"}, 
-#             line_kws={"color": "red"})
-  
-# show the plot
-plt.xlabel('User ratings')
-plt.ylabel('Sentiment score')
-plt.title('\nSentiment score naar user review Tripadivsor data (n=2296)\nPearsons R: {}'.format(round(r.statistic,2)))
-plt.show()
 
