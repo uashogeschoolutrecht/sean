@@ -18,3 +18,5 @@ def readfileRD(projectname, csvfile,nrows=None):
     import pandas as pd
     #read in csvfile from location
     df = pd.read_csv(location, sep = ';',nrows=nrows)
+
+    return df
