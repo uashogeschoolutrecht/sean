@@ -7,7 +7,6 @@ class sentAnalysisApp:
         self.colname = colname
         self.labels = ['Negative', 'Neutral', 'Positive']
 
-
     def cleanData(self):
         '''Some genereal data preperation, remove all symbols and numbers.
         transforms all text to lower case and removes redundant and trailing 
@@ -40,9 +39,7 @@ class sentAnalysisApp:
             df[colname] = df[colname].str.replace('  ', ' ')
 
         return df
-
-     
-     
+   
     def sentAnalysis(self,model_name,likert): 
         '''This defenitions scores sentiment based on a likert scale. This is either on a 3 point or 
         5 point scale (default is 3 point), for the 3 point scale a twitter based model is used:
