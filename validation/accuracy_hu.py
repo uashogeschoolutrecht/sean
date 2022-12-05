@@ -5,11 +5,10 @@ import os
 os.chdir(r'/home/{}/scratch/sean/user-app/scripts/'.format(os.getlogin()))
 
 from readfiles import readfileRD 
-data_exit = readfileRD('2022sean', 'exit') 
-data_topdesk = readfileRD('2022sean', 'topdesk')
+data_hu = readfileRD('2022sean', 'exit') #'topdesk' is also available as file
 
 # filter data: only keep annotated datarows
-df_only_ann = data_exit[data_exit['annotation'].notna()]
+df_only_ann = data_hu[data_hu['annotation'].notna()]
 
 #2A. Run sentiment app on data [MODEL BOOL]
 from sentiment import sentAnalysisApp
@@ -42,7 +41,7 @@ df_sent_rob = sent_app.sentAnalysis(
                                     model_name='btjiong/robbert-twitter-sentiment',
                                     likert=3)
 
-#Rescale answers
+#Rescale answers & visualise
 df_sent_rob['sentiment'] = df_sent_rob['Negative']*-1 + df_sent_rob['Positive']
 
 fig, axs = plt.subplots(2)
@@ -55,3 +54,19 @@ axs[1].hist(x=df_sent_rob['sentiment'], bins=10)
 scipy.stats.pearsonr(df_sent_rob['annotation'], df_sent_rob['sentiment'])
 plt.scatter(df_sent_rob['annotation'], df_sent_rob['sentiment'])
 
+#2C. Run sentiment app on data [MODEL BERT]
+df_sent_bert = sent_app.sentAnalysis(
+                                    model_name='nlptown/bert-base-multilingual-uncased-sentiment',
+                                    likert=5)
+
+#Rescale answers & visualise
+df_sent_bert['sentiment'] = df_sent_bert['Negative']*-1 + df_sent_bert['Positive']
+
+fig, axs = plt.subplots(2)
+fig.suptitle('Sentiment score distributions')
+axs[0].plot(df_sent_bert['sentiment'], 'o')
+axs[1].hist(x=df_sent_bert['sentiment'], bins=10)
+# Results of algoritm are roughly uniformly distributed. 
+
+#scipy.stats.pearsonr(df_sent_bert['annotation'], df_sent_bert['sentiment'])
+plt.scatter(df_sent_bert['annotation'], df_sent_bert['sentiment'])
