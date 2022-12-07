@@ -11,8 +11,8 @@ python -m venv .venv
 # update pip 
 python -m pip install --upgrade pip
 
-# install flask
-python -m pip install flask
+# install requirements 
+pip install -r requirements.txt
 ```
 
  

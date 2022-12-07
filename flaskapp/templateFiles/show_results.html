@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href='/staticFiles/main.css' />
+  </head>
+  <body>
+    <h1>Results</h1>
+    <h3>Here you see a sample of the results, please download your file by klicking on the download button at the bottom of this page</h3>
+ 
+    {{ data|safe }}
+    <br>
+  </form>
+  <form action="/downloadcsv" target="_blank">
+    <button type="submit" class="btn btn-dark btn-sq-responsive">
+      <span class="hovertext" >
+        Download CSV</span>
+    </button>
+</form>
+    </body>
+</html>

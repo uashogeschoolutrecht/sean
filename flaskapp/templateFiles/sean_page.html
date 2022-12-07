@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href='/staticFiles/main.css' />
+  </head>
+  <body>
+    <h1>SEAN</h1>
+    <p>This is a three step process, choose a file, submit the file and finally run your analysis!</p>
+   <form method="POST" enctype="multipart/form-data" action="/sean">
+      <input type="file" id="myFile" name="uploaded-file" accept=".csv">
+      <input type="submit" class="btn btn-dark btn-sq-responsive">
+    </form>
+      <form action="/sentiment" target="_blank">
+        <button type="submit" class="btn btn-dark btn-sq-responsive">
+          <span class="hovertext" data-hover="Klik hier om de sentiment analyse te
+            starten">
+            Sentiment Analysis</span>
+        </button>
+    </form>
+  </body>
+</html>

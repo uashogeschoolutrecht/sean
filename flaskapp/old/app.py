@@ -4,20 +4,20 @@ import pandas as pd
  
 #*** Backend operation
 # Read csv file in python_ flask
-df = pd.read_csv(r'input\tripadivsordata.csv',sep=';')
+df = pd.read_csv(r'G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\flaskapp\input\tripadivsordata.csv',sep=';')
 
  
 # WSGI Application
 # Configure template folder name
 # The default folder name should be "templates" else need to mention custom folder name for template path
 # The default folder name for static files should be "static" else need to mention custom folder for static path
-app = Flask(__name__, template_folder='templateFiles', static_folder='staticFiles')
+app = Flask(__name__, template_folder='templateFiles', static_folder=r'G:\My Drive\Yacht\Opdrachten\Hogeschool Utrecht\Repos\sean\flaskapp\staticFiles')
  
 @app.route('/')
 def index():
-    return render_template('index_upload_and_show_data_page2.html')
+    return render_template('homepage.html')
  
-@app.route('/show_data',  methods=("POST", "GET"))
+@app.route('/sean',  methods=("POST", "GET"))
 def showData():
     # Convert pandas dataframe to html table flask
     df_html = df.to_html()
