@@ -1,0 +1,83 @@
+body {
+  background: #ffffff;
+  margin-top: 50px;
+  margin-left: 100px;
+}
+
+h1 {
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 2.5em;
+  text-align: center;
+  color: #00668c;
+}
+
+h2 {
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 1.2em;
+  color: #666666;
+}
+
+h3 {
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 1.2em;
+  text-align: center;
+  color: #666666;
+}
+
+p {
+  font-family: Georgia, serif;
+  font-size: 1.2em;
+  color: #2f3d4c;
+}
+
+/* NICE BLUE BUTtoN */
+@media (max-width:3920px) {
+  .btn-sq-responsive {
+    align-items: center;
+    width: 400px !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    height: 50px !important;
+    font-size: 24px;
+    color: white;
+    background-color: #199dce;
+    border-color: #dbdbdb;
+    border: 1px solid;
+    padding: 10px;
+    box-shadow: 5px 10px #dbdbdb;
+    font-family: Verdana, Geneva, sans-serif;
+    margin: 1 auto;
+    display: inline;
+  }
+}
+
+button:hover {
+  background-color: #00668c;
+}
+
+.hovertext {
+  position: relative;
+  /* border-bottom: 1px dotted black; */
+}
+
+.hovertext:before {
+  content: attr(data-hover);
+  visibility: hidden;
+  opacity: 0;
+  width: 140px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px 0;
+  transition: opacity 1s ease-in-out;
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: 110%;
+}
+
+.hovertext:hover:before {
+  opacity: 1;
+  visibility: visible;
+}
