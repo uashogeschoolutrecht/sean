@@ -15,7 +15,7 @@ import os
 # Provide template folder name
 # The default folder name should be "templates" else need to mention custom folder name
 
-app = Flask(__name__, template_folder='templateFiles', static_folder='staticFiles')
+app = Flask(__name__, template_folder='flaskapp/templateFiles', static_folder='flaskapp/staticFiles')
 app.secret_key = 'You Will Never Guess'
  
 @app.route('/')
